@@ -196,8 +196,6 @@ validationGenerator = ImageDataGenerator(rescale=1./255).\
                         class_mode = None,
                         target_size = imageSize,
                         shuffle = False,
-                        # do _not_ randomize the order!
-                        # this would clash with the file name order!
                         color_mode="grayscale"
     )
 
@@ -232,7 +230,7 @@ if plot:
         plt.imshow(img)
         plt.xlabel(filename + " ({})".format(predicted))
         index += 1
-    # now show correct results
+    # correct results
     index = 5
     correctResults = validationResults[validationResults.predicted == validationResults.category]
     rows = np.random.choice(correctResults.index,
@@ -248,11 +246,7 @@ if plot:
     plt.tight_layout()
     plt.show()
 
-## Training data predictions.
-## Do these here to keep the in place for students
-## 
 print(" --- Predicting on training data: ---")
-# do another generator: the same as training, just w/o shuffle
 predictTrainGenerator = ImageDataGenerator(rescale=1./255).\
     flow_from_dataframe(trainingResults,
                         os.path.join(imgDir, "train"),
@@ -260,7 +254,7 @@ predictTrainGenerator = ImageDataGenerator(rescale=1./255).\
                         target_size=imageSize,
                         class_mode='categorical',
                         color_mode="grayscale",
-                        shuffle=False  # do not shuffle!
+                        shuffle=False 
     )
 phat = model.predict(predictTrainGenerator)
 trainingResults['predicted'] = pd.Series(np.argmax(phat, axis=-1), index=trainingResults.index)
